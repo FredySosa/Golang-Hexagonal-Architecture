@@ -3,19 +3,20 @@ package adapters
 import (
 	"net/http"
 
+	"github.com/FredySosa/hexArch/internal/core/domain"
 	"github.com/FredySosa/hexArch/internal/ports"
 	"github.com/labstack/echo/v4"
 )
 
 type (
 	HTTPHandler struct {
-		eventService ports.EventService
+		countriesService ports.CountriesService
 	}
 )
 
-func NewHTTPHandler(eventService ports.EventService) *echo.Echo {
+func NewHTTPHandler(cService ports.CountriesService) *echo.Echo {
 	h := HTTPHandler{
-		eventService: eventService,
+		countriesService: cService,
 	}
 
 	e := echo.New()
@@ -39,7 +40,11 @@ func (h HTTPHandler) GetCountries(c echo.Context) error {
 	ctx := c.Request().Context()
 	limit, offset := "100", "0"
 
-	countries, newOffset, err := h.eventService.GetCountries(ctx, limit, offset)
+	queryData := domain.QueryData{
+		Offset: offset,
+		Limit:  limit,
+	}
+	countries, newOffset, err := h.countriesService.GetCountries(ctx, queryData)
 	if err != nil {
 		c.Logger().Error(err)
 		return c.JSON(http.StatusInternalServerError, "some error happened")

@@ -23,8 +23,7 @@ func main() {
 		},
 	})
 	countriesService := services.NewCountryService(countriesRepository)
-	eventService := services.NewEventService(countriesService)
-	echoHandler := adapters.NewHTTPHandler(eventService)
+	echoHandler := adapters.NewHTTPHandler(countriesService)
 	echoHandler.Pre(middleware.RemoveTrailingSlash())
 	echoHandler.Use(middleware.Logger())
 
